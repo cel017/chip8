@@ -1,2 +1,2 @@
-# octopy
- python CHIP-8 Interpreter
+# CHIP8
+CHIP-8 Interpreter
