@@ -37,6 +37,7 @@ class CPU:
         opcode = op1+op2
 
         self.execInstruction(opcode)
+        self.updateTimers()
 
     def execInstruction(self, opcode):
         self.pc+=2

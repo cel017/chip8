@@ -33,11 +33,11 @@ def mainLoop():
             
             # decrement insead of reset:
             # accumulates extra milliseconds
-            print(timer)
+            print(timer*1000)
             timer -= INTERVAL
             # handle unexpected delay
             timer %= INTERVAL
-            emulatorScreen.flip()
+            pygame.display.flip()
 
 if __name__ == "__main__":
     mainLoop()

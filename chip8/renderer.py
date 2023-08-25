@@ -20,5 +20,3 @@ class EmulatorScreen():
         draw.rect(self.screen,
                   COLORS[color],
                   (xScaled, yScaled, self.scale, self.scale))
-    def flip(self):
-        pygame.display.flip()
