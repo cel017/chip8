@@ -12,7 +12,7 @@ class EmulatorScreen():
         pygame.mixer.init(size=32)
 
     def clear(self):
-        self.surface.fill(COLORS["white"])
+        self.surface.fill(COLORS["black"])
 
     def drawPixel(self, pos, color):
         xScaled = pos[0]*self.scale
@@ -21,6 +21,12 @@ class EmulatorScreen():
         pygame.draw.rect(self.screen,
                          COLORS[color],
                          (xScaled, yScaled, self.scale, self.scale))
+    
+    def isPixel(self, pos):
+        # returns pixel state
+        pxColor = self.surface.get_at((pos[0]*self.scale, pos[1]*self.scale))
+        return 0 if pxColor == COLORS["black"] else 1
+
     def playSound(self):
         buffer = np.sin(2 * np.pi * np.arange(44100) * 220 / 44100).astype(np.float32)
         sound = pygame.mixer.Sound(buffer)
