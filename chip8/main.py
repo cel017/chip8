@@ -10,7 +10,7 @@ def mainLoop():
     # init emulator render surface and CPU
     emulatorScreen = EmulatorScreen()
     chip8CPU = Chip8CPU(emulatorScreen)
-    chip8CPU.loadRom()
+    chip8CPU.loadRom("roms/br8kout.ch8")
 
     # accumulates time every loop
     timer = 0
@@ -20,21 +20,16 @@ def mainLoop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 chip8CPU.quit()
-            if event.type == pygame.KEYDOWN:
-                keysPressed = pygame.key.get_pressed()
 
         endTime = perfCounter()
         timer += endTime-startTime
         startTime = endTime
 
         if timer >= INTERVAL:
-            ###
-            # CPU CYCLE HERE;
-            ###
+            chip8CPU.cycle()
             
             # decrement insead of reset:
             # accumulates extra milliseconds
-            print(timer*1000)
             timer -= INTERVAL
             # handle unexpected delay
             timer %= INTERVAL

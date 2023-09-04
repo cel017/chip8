@@ -48,8 +48,8 @@ class Chip8CPU:
 
     def updateTimers(self):
         # timers are active when != 0
-        if timer_sound: timer_sound -= 1
-        if timer_delay: timer_delay -= 1
+        if self.timerSound: self.timerSound -= 1
+        if self.timerDelay: self.timerDelay -= 1
 
     def quit(self):
         self.reset()
