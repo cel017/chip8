@@ -7,7 +7,7 @@ MEMORY_TOTAL = 4096
 # number of V registers [V0-F]
 VX_TOTAL = 16
 
-# instr delay in s (loop runs at 60 Hz)
+# instruction delay in secs (loop runs at 60 Hz)
 INTERVAL = 1/60
 
 # program counter initial offset from memory
@@ -47,7 +47,6 @@ KEY_MAPPINGS = {
     0xB: pygame.K_c,
     0xF: pygame.K_v,
 }
-
 
 # width, height in "pixels" of the virtual device
 COLS, ROWS = 64, 32

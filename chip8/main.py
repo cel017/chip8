@@ -3,22 +3,23 @@ import pygame
 
 from config import INTERVAL
 from renderer import EmulatorScreen
-from cpu import CPU
+from cpu import Chip8CPU
 
 
 def mainLoop():
-    # emulator render surface
+    # init emulator render surface and CPU
     emulatorScreen = EmulatorScreen()
+    chip8CPU = Chip8CPU(emulatorScreen)
+    chip8CPU.loadRom()
 
     # accumulates time every loop
     timer = 0
     startTime = perfCounter()
 
-    run = True
-    while run:
+    while chip8CPU.running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                chip8CPU.quit()
             if event.type == pygame.KEYDOWN:
                 keysPressed = pygame.key.get_pressed()
 
@@ -37,7 +38,6 @@ def mainLoop():
             timer -= INTERVAL
             # handle unexpected delay
             timer %= INTERVAL
-            pygame.display.flip()
 
 if __name__ == "__main__":
     mainLoop()

@@ -1,15 +1,19 @@
 from config import *
 
-
-class CPU:
+class Chip8CPU:
     '''
-    ---CHIP-8 CPU Class---
+    CHIP-8 CPU Class
     References :
         https://en.wikipedia.org/wiki/CHIP-8
         http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#0.0
         https://github.com/mattmikolay/chip-8/wiki/Mastering-CHIP%E2%80%908
     '''
     def __init__(self, screen):
+        self.screen = screen
+        self.reset()
+        self.running = False
+
+    def reset(self):
         # 8-bit(1)  : timers 
         self.timerDelay = 0
         self.timerSound = 0
@@ -27,24 +31,25 @@ class CPU:
         self.stack = []
 
         # 4096 bytes : assigned memory
-        self.memory  = bytearray(MAX_MEMORY)
+        self.memory  = bytearray(MEMORY_TOTAL)
 
     def cycle(self):
         # combine 8-bit operands to get
         # 16-bit opcode: {op1}{op2}
         op1 = self.memory[self.pc] << 8
         op2 = self.memory[self.pc+1]
-        opcode = op1+op2
+        opcode = op1|op2
 
         self.execInstruction(opcode)
         self.updateTimers()
-
+        
+        # play sound
+        if self.timerSound > 0:
+            self.screen.playSound()
+        pygame.display.flip()
+        
     def execInstruction(self, opcode):
         self.pc+=2
-        return
-
-
-    def reset(self):
         return
 
     def loadRom(self, filename):
@@ -52,9 +57,13 @@ class CPU:
         with open(filename, 'rb') as rom:
             for i, line in enumerate(rom.read()):
                 self.memory[start+i] = line
+        self.running = True
 
     def updateTimers(self):
         # timers are active when != 0
         if timer_sound: timer_sound -= 1
         if timer_delay: timer_delay -= 1
 
+    def quit(self):
+        self.reset()
+        self.running = False
