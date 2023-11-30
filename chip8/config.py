@@ -7,8 +7,8 @@ MEMORY_TOTAL = 4096
 # number of V registers [V0-F]
 VX_TOTAL = 16
 
-# instruction delay in secs (loop runs at 60 Hz)
-INTERVAL = 1/60
+# instruction delay in secs (~500Hz seems reasonable)
+INTERVAL = 1/500
 
 # program counter initial offset from memory
 PROGRAM_COUNTER_INITIAL = 0x200

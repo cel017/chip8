@@ -24,7 +24,7 @@ class Chip8CPU:
         self.pc = PROGRAM_COUNTER_INITIAL
         
         # 8-bit(16) : general purpose registers (V0-VF)
-        self.vReg = bytearray(16)
+        self.vReg = bytearray(VX_TOTAL)
         
         # 16-bit(1) : index (stores memory address)
         self.index = 0
@@ -43,6 +43,7 @@ class Chip8CPU:
         self.running = True
 
     def loadSprites(self):
+        # load font sprites
         for i in range(len(SPRITES)):
             self.memory[i] = SPRITES[i]
 
@@ -54,7 +55,6 @@ class Chip8CPU:
     def quit(self):
         self.reset()
         self.running = False
-
 
     def cycle(self):
         # combine 8-bit operands to get
@@ -69,7 +69,6 @@ class Chip8CPU:
         # play sound
         if self.timerSound > 0:
             self.screen.playSound()
-        pygame.display.flip()
         
     def execInstruction(self, opcode):
         self.pc+=2
@@ -162,7 +161,7 @@ class Chip8CPU:
     
     def unknownOpcode(self):
         pass
-
+    
     def _00E0(self):
         # Clear the display.
         self.screen.clear()
@@ -197,11 +196,11 @@ class Chip8CPU:
 
     def _6xkk(self, x, kk):
         # Set Vx = kk.
-        self.vReg[x] == kk
+        self.vReg[x] = kk
 
     def _7xkk(self, x, kk):
         # Set Vx = Vx + kk.
-        self.vReg[x]+=kk
+        self.vReg[x] = (self.vReg[x] + kk) % 256
     
     def _8xy0(self, x, y):
         # Set Vx = Vy.
@@ -240,8 +239,9 @@ class Chip8CPU:
 
     def _8xy6(self, x, y):
         # Set Vx = Vx SHR 1.
-        self.vReg[0xF] = self.vReg[x] & 0x1
+        lsb = self.vReg[x] & 0x1
         self.vReg[x] >>= 1
+        self.vReg[0xF] = lsb
     
     def _8xy7(self, x , y):
         # Set Vx = Vy - Vx, set VF = NOT borrow.
@@ -254,13 +254,14 @@ class Chip8CPU:
 
     def _8xyE(self, x, y):
         # Set Vx = Vx SHL 1.
-        self.vReg[0xF] = self.vReg[x] & 0x80
-        self.vReg[x] <<= 1
+        msb = (self.vReg[x] & 0x80) >> 7
+        self.vReg[x] = (self.vReg[x] << 1) % 256
+        self.vReg[0xF] = msb
 
     def _9xy0(self, x, y):
         # Skip next instruction if Vx != Vy.
         if self.vReg[x] != self.vReg[y]:
-            pc+=2
+            self.pc+=2
             
     def _Annn(self, nnn):
         # Set I = nnn.
@@ -281,11 +282,16 @@ class Chip8CPU:
             sprite = self.memory[self.index+row]
             for col in range(8):
                 if (sprite & 0x80):
-                    if self.screen.isPixel((x, y)):
-                        self.vReg[0xF] == 1
-                    self.screen.drawPixel((x, y))
+                    pos = (self.vReg[x]+col, self.vReg[y]+row)
+                    if self.screen.isPixel(pos):
+                        self.vReg[0xF] = 1
+                        self.screen.erasePixel(pos)
+                    else:
+                        self.screen.drawPixel(pos)
                 sprite <<= 1
-    
+
+        pygame.display.update()
+
     def _Ex9E(self, x):
         # Skip next instruction if key with the value of Vx is pressed.
         if pygame.key.get_pressed()[KEY_MAPPINGS[self.vReg[x]]]:
@@ -306,7 +312,7 @@ class Chip8CPU:
         while not pressed:
             event = pygame.event.wait()
             if event.type == pygame.KEYDOWN:
-                keysPressed = pygame.keys.get_pressed()
+                keysPressed = pygame.key.get_pressed()
                 for val, key in KEY_MAPPINGS.items():
                     if keysPressed[key]:
                         self.vReg[x] = val
@@ -338,10 +344,13 @@ class Chip8CPU:
 
     def _Fx55(self, x):
         # Store registers V0 through Vx in memory starting at location I.
-        for i in range(self.index, self.index+x):
+        for i in range(self.index, self.index+x+1):
             self.memory[i] = self.vReg[i-self.index]
     
     def _Fx65(self, x):
         # Read registers V0 through Vx from memory starting at location I.
-        for i in range(0, x):
+        for i in range(0, x+1):
             self.vReg[i] = self.memory[self.index + i]
+    
+    def __repr__(self):
+        return f"Vx: {self.vReg}\nIndex: {self.index}\nStack: {self.stack}\nPC: {self.pc}"

@@ -7,25 +7,43 @@ class EmulatorScreen():
 
     def __init__(self, scale=10):
         self.scale = scale
+        self.screenArray = [[False]*(ROWS) for _ in range(COLS)]
         self.surface = pygame.display.set_mode((COLS*scale, ROWS*scale))
         self.clear()
         pygame.mixer.init(size=32)
 
+
     def clear(self):
+        self.screenArray = [[False]*(ROWS) for _ in range(COLS)]
         self.surface.fill(COLORS["black"])
 
-    def drawPixel(self, pos, color):
-        xScaled = pos[0]*self.scale
-        yScaled = pos[1]*self.scale
+    def drawPixel(self, pos):
+        posX = pos[0]%64
+        posY = pos[1]%32
+        self.screenArray[posX][posY] = True
 
-        pygame.draw.rect(self.screen,
-                         COLORS[color],
+        xScaled = posX*self.scale
+        yScaled = posY*self.scale
+
+        pygame.draw.rect(self.surface,
+                         COLORS["white"],
                          (xScaled, yScaled, self.scale, self.scale))
     
+    def erasePixel(self, pos):
+        posX = pos[0]%64
+        posY = pos[1]%32
+        self.screenArray[posX][posY] = False
+
+        xScaled = posX*self.scale
+        yScaled = posY*self.scale
+
+        pygame.draw.rect(self.surface,
+                        COLORS["black"],
+                        (xScaled, yScaled, self.scale, self.scale))
+
     def isPixel(self, pos):
         # returns pixel state
-        pxColor = self.surface.get_at((pos[0]*self.scale, pos[1]*self.scale))
-        return 0 if pxColor == COLORS["black"] else 1
+        return self.screenArray[pos[0]%64][pos[1]%32]
 
     def playSound(self):
         buffer = np.sin(2 * np.pi * np.arange(44100) * 220 / 44100).astype(np.float32)

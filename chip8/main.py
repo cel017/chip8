@@ -13,7 +13,7 @@ def mainLoop():
     chip8CPU.loadRom("roms/br8kout.ch8")
 
     # accumulates time every loop
-    timer = 0
+    timer = INTERVAL
     startTime = perfCounter()
 
     while chip8CPU.running:
@@ -24,7 +24,7 @@ def mainLoop():
         endTime = perfCounter()
         timer += endTime-startTime
         startTime = endTime
-
+        
         if timer >= INTERVAL:
             chip8CPU.cycle()
             
