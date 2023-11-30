@@ -1,18 +1,18 @@
-from time import perf_counter as perfCounter
+import sys
 import pygame
+from pathlib import Path
+from time import perf_counter as perfCounter
 
+from cpu import Chip8CPU
 from config import INTERVAL
 from renderer import EmulatorScreen
-from cpu import Chip8CPU
 
 
-def mainLoop():
-    # init emulator render surface and CPU
+def mainLoop(romPath):
     emulatorScreen = EmulatorScreen()
     chip8CPU = Chip8CPU(emulatorScreen)
-    chip8CPU.loadRom("roms/br8kout.ch8")
-
-    # accumulates time every loop
+    chip8CPU.loadRom(romPath)
+    
     timer = INTERVAL
     startTime = perfCounter()
 
@@ -24,16 +24,14 @@ def mainLoop():
         endTime = perfCounter()
         timer += endTime-startTime
         startTime = endTime
-        
+
         if timer >= INTERVAL:
             chip8CPU.cycle()
-            
-            # decrement insead of reset:
-            # accumulates extra milliseconds
-            timer -= INTERVAL
-            # handle unexpected delay
             timer %= INTERVAL
 
 if __name__ == "__main__":
-    mainLoop()
+    if len(sys.argv) != 2:
+        print("Usage: python main.py <rom>")
+        sys.exit(1)
+    mainLoop(Path(sys.argv[1]))
     pygame.quit()

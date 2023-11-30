@@ -46,8 +46,4 @@ class EmulatorScreen():
         return self.screenArray[pos[0]%64][pos[1]%32]
 
     def playSound(self):
-        buffer = np.sin(2 * np.pi * np.arange(44100) * 220 / 44100).astype(np.float32)
-        sound = pygame.mixer.Sound(buffer)
-        sound.play(0)
-        pygame.time.wait(int(sound.get_length() * 1000))
-
+        pass
