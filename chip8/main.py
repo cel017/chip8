@@ -4,8 +4,8 @@ from pathlib import Path
 from time import perf_counter as perfCounter
 
 from cpu import Chip8CPU
-from config import INTERVAL
 from renderer import EmulatorScreen
+from config import INTERVAL, INTERVAL_SOUND_DELAY
 
 
 def mainLoop(romPath):
@@ -13,7 +13,8 @@ def mainLoop(romPath):
     chip8CPU = Chip8CPU(emulatorScreen)
     chip8CPU.loadRom(romPath)
     
-    timer = INTERVAL
+    timer = 0
+    timer_sound_delay = 0
     startTime = perfCounter()
 
     while chip8CPU.running:
@@ -23,7 +24,12 @@ def mainLoop(romPath):
 
         endTime = perfCounter()
         timer += endTime-startTime
+        timer_sound_delay += endTime-startTime
         startTime = endTime
+
+        if timer_sound_delay >= INTERVAL_SOUND_DELAY:
+            chip8CPU.updateTimers()
+            sound_delay_timer %= INTERVAL_SOUND_DELAY
 
         if timer >= INTERVAL:
             chip8CPU.cycle()

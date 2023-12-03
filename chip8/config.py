@@ -10,6 +10,9 @@ VX_TOTAL = 16
 # instruction delay in secs (~500Hz seems reasonable)
 INTERVAL = 1/500
 
+# sound and delay timers (60 Hz)
+INTERVAL_SOUND_DELAY = 1/60
+
 # program counter initial offset from memory
 PROGRAM_COUNTER_INITIAL = 0x200
 
