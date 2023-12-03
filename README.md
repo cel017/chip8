@@ -3,7 +3,7 @@ A standard Chip-8 Emulator written in Python. CPU cycles at 500Hz.
 
 # Dependencies
 To run the emulator you will need:
--  ≥ Python 3.6
+-  ≥ Python 3.10
 -  ≥ pygame 2.1.2
 -  ≥ numpy 1.22.2
 ```
