@@ -29,7 +29,7 @@ def mainLoop(romPath):
 
         if timer_sound_delay >= INTERVAL_SOUND_DELAY:
             chip8CPU.updateTimers()
-            sound_delay_timer %= INTERVAL_SOUND_DELAY
+            timer_sound_delay %= INTERVAL_SOUND_DELAY
 
         if timer >= INTERVAL:
             chip8CPU.cycle()

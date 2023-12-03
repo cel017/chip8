@@ -10,8 +10,7 @@ class EmulatorScreen():
         self.screenArray = [[False]*(ROWS) for _ in range(COLS)]
         self.surface = pygame.display.set_mode((COLS*scale, ROWS*scale))
         self.clear()
-        pygame.mixer.init(size=32)
-
+        pygame.mixer.init()
 
     def clear(self):
         self.screenArray = [[False]*(ROWS) for _ in range(COLS)]
@@ -46,4 +45,8 @@ class EmulatorScreen():
         return self.screenArray[pos[0]%64][pos[1]%32]
 
     def playSound(self):
-        pass
+        sound = pygame.mixer.Sound((np.sin(2 * np.pi * np.arange(44100) * 220 / 44100) * 32767).astype(np.int16))
+        sound.play(-1)
+    
+    def stopSound(self):
+        pygame.mixer.stop()
