@@ -17,8 +17,8 @@ class EmulatorScreen():
         self.surface.fill(COLORS["black"])
 
     def drawPixel(self, pos):
-        posX = pos[0]%64
-        posY = pos[1]%32
+        posX = pos[0]%COLS
+        posY = pos[1]%ROWS
         self.screenArray[posX][posY] = True
 
         xScaled = posX*self.scale
@@ -29,8 +29,8 @@ class EmulatorScreen():
                          (xScaled, yScaled, self.scale, self.scale))
     
     def erasePixel(self, pos):
-        posX = pos[0]%64
-        posY = pos[1]%32
+        posX = pos[0]%COLS
+        posY = pos[1]%ROWS
         self.screenArray[posX][posY] = False
 
         xScaled = posX*self.scale
@@ -42,7 +42,7 @@ class EmulatorScreen():
 
     def isPixel(self, pos):
         # returns pixel state
-        return self.screenArray[pos[0]%64][pos[1]%32]
+        return self.screenArray[pos[0]%COLS][pos[1]%ROWS]
 
     def playSound(self):
         sound = pygame.mixer.Sound((np.sin(2 * np.pi * np.arange(44100) * 220 / 44100) * 32767).astype(np.int16))
