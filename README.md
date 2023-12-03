@@ -6,7 +6,9 @@ To run the emulator you will need:
 -  ≥ Python 3.6
 -  ≥ pygame 2.1.2
 
-```pip install pygame```
+```
+pip install pygame
+```
 
 # Usage
 Run the emulator:
